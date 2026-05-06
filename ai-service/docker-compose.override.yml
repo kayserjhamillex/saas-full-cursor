@@ -1,0 +1,11 @@
+services:
+  ai-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      UVICORN_WORKERS: 1
+    volumes:
+      - ./app:/app/app
+      - ./shared:/app/shared
+      - ./models:/app/models

@@ -1,0 +1,45 @@
+@if (authService.isAuthenticated()) {
+  <main class="shell">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="sidebar__logo-mark" aria-hidden="true"></span>
+        <span class="sidebar__brand-name">Admin SaaS</span>
+      </div>
+      <nav aria-label="Navegacion principal">
+        @for (link of links; track link.path) {
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+      <div class="sidebar__footer">
+        <span class="sidebar__footer-label">Odontologico SaaS</span>
+      </div>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div class="topbar__info">
+          <p class="chip">Panel Administrativo</p>
+          <h2>Gestion central del ecosistema SaaS</h2>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="theme-btn" (click)="toggleTheme()">
+            {{ isDarkTheme() ? 'Modo claro' : 'Modo oscuro' }}
+          </button>
+          <button type="button" class="theme-btn theme-btn--danger" (click)="logout()">Cerrar sesion</button>
+        </div>
+      </header>
+
+      <div class="page-outlet">
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  </main>
+} @else {
+  <router-outlet></router-outlet>
+}

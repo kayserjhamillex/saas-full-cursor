@@ -1,0 +1,122 @@
+@use 'sass:map';
+
+// —— Tipografía
+$ds-font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+$ds-font-mono: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+
+$ds-font-size: (
+  2xs: 0.6875rem,
+  // 11px
+  xs: 0.75rem,
+  sm: 0.8rem,
+  base: 0.9rem,
+  md: 1rem,
+  lg: 1.125rem,
+  xl: 1.25rem,
+  2xl: 1.5rem,
+  3xl: 1.75rem,
+) !default;
+
+$ds-line-height: (
+  tight: 1.2,
+  snug: 1.3,
+  normal: 1.45,
+  relaxed: 1.6,
+) !default;
+
+$ds-font-weight: (
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700,
+) !default;
+
+/// Tamaño de fuente (rem)
+@function ds-fs($key) {
+  @return map.get($ds-font-size, $key);
+}
+
+@function ds-lh($key) {
+  @return map.get($ds-line-height, $key);
+}
+
+@function ds-fw($key) {
+  @return map.get($ds-font-weight, $key);
+}
+
+// —— Espaciado (escala 4pt aprox: 0,4,8,12,16,20,24,32,40,48)
+$ds-space: (
+  0: 0,
+  px: 1px,
+  'half': 0.125rem,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  7: 1.75rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  16: 4rem,
+) !default;
+
+@function ds-space($step) {
+  @return map.get($ds-space, $step);
+}
+
+// —— Radios
+$ds-radius: (
+  sm: 0.45rem,
+  md: 0.55rem,
+  lg: 0.9rem,
+  xl: 1rem,
+  full: 9999px,
+) !default;
+
+@function ds-radius($key) {
+  @return map.get($ds-radius, $key);
+}
+
+// —— Sombras (estáticas; sombras de tema en CSS vars)
+$ds-elevation: (
+  none: none,
+  sm: 0 1px 0 rgba(16, 33, 49, 0.04),
+  md: 0 4px 20px -4px rgba(16, 33, 49, 0.12),
+  lg: 0 18px 44px rgba(16, 33, 49, 0.09),
+) !default;
+
+@function ds-elevation($key) {
+  @return map.get($ds-elevation, $key);
+}
+
+// —— Paleta base (referencia; el tema en runtime usa var(--ds-color-*))
+$ds-palette: (
+  ink-900: #102131,
+  ink-500: #537086,
+  sea-500: #4f8fb1,
+  sea-700: #2f6f91,
+  error-600: #b91c1c,
+  success-600: #15803d,
+) !default;
+
+@function ds-palette($key) {
+  @return map.get($ds-palette, $key);
+}
+
+// —— Z-index
+$ds-z: (
+  base: 0,
+  dropdown: 1000,
+  sticky: 1020,
+  fixed: 1030,
+  modal-backdrop: 1040,
+  modal: 1050,
+  popover: 1060,
+  toast: 1070,
+) !default;
+
+@function ds-z($key) {
+  @return map.get($ds-z, $key);
+}

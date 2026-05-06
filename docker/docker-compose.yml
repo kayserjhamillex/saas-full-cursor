@@ -1,0 +1,402 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: saas_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      POSTGRES_DB: ${POSTGRES_DB:-saasodontologico}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-saasodontologico}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    container_name: saas_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: saas_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - backend
+
+  api-gateway:
+    build:
+      context: ../apps/api-gateway
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+      JWT_ISSUER: ${JWT_ISSUER:-auth-service}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-api-gateway}
+      ENABLE_TENANT_CACHE: ${ENABLE_TENANT_CACHE:-true}
+      TENANT_CACHE_TTL_SECONDS: ${TENANT_CACHE_TTL_SECONDS:-30}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-dev_internal_service_token}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+
+  auth-service:
+    build:
+      context: ../apps/auth-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-dev_internal_service_token}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  core-service:
+    build:
+      context: ../apps/core-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  clinical-service:
+    build:
+      context: ../apps/clinical-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3003
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  inventory-service:
+    build:
+      context: ../apps/inventory-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3004
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3004:3004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  hr-service:
+    build:
+      context: ../apps/hr-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3005
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3005:3005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  financial-service:
+    build:
+      context: ../apps/financial-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3006
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3006:3006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  assets-service:
+    build:
+      context: ../apps/assets-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3007
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3007:3007"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  scheduling-service:
+    build:
+      context: ../apps/scheduling-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3008
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      DB_NAME: ${POSTGRES_DB:-saasodontologico}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_before_prod}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3008:3008"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  email-service:
+    build:
+      context: ../services/email-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3011
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      EMAIL_QUEUE_CONCURRENCY: ${EMAIL_QUEUE_CONCURRENCY:-2}
+      EMAIL_QUEUE_MAX_RETRIES: ${EMAIL_QUEUE_MAX_RETRIES:-3}
+      EMAIL_QUEUE_RETRY_DELAY_MS: ${EMAIL_QUEUE_RETRY_DELAY_MS:-400}
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3011:3011"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend
+
+  whatsapp-service:
+    build:
+      context: ../services/whatsapp-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3012
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3012:3012"
+    networks:
+      - backend
+
+  file-service:
+    build:
+      context: ../services/file-service
+      dockerfile: ../../docker/Dockerfile.node-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3013
+    env_file:
+      - ../config/env/.env.${APP_ENV:-development}
+    ports:
+      - "3013:3013"
+    networks:
+      - backend
+
+  ai-service:
+    build:
+      context: ../ai-service
+      dockerfile: ../docker/Dockerfile.ai-service
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+
+  demo-app:
+    build:
+      context: ../frontend/demo-app
+      dockerfile: ../../docker/Dockerfile.frontend-vite
+    environment:
+      VITE_API_URL: ${API_URL:-http://localhost:3000/gateway}
+    ports:
+      - "4173:4173"
+    depends_on:
+      - api-gateway
+    networks:
+      - frontend
+
+  react-app:
+    build:
+      context: ../frontend/react-app
+      dockerfile: ../../docker/Dockerfile.frontend-vite
+    environment:
+      VITE_API_URL: ${API_URL:-http://localhost:3000/gateway}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+    networks:
+      - frontend
+
+  angular-app:
+    build:
+      context: ../frontend/angular-app
+      dockerfile: ../../docker/Dockerfile.frontend-angular
+    environment:
+      API_URL: ${API_URL:-http://localhost:3000/gateway}
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api-gateway
+    networks:
+      - frontend
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: saas_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - observability
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: saas_grafana
+    ports:
+      - "3009:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+    networks:
+      - observability
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+  observability:
+    driver: bridge
+
+volumes:
+  postgres_data:

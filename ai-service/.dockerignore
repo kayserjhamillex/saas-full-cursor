@@ -1,0 +1,17 @@
+.git
+.gitignore
+.cursor
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+tests
+benchmarks
+agent-tools
+agent-transcripts
+training/data
+models
+*.md

@@ -1,0 +1,239 @@
+# CANVAS TÉCNICO — REGLAS DE DESARROLLO DEL PROYECTO
+
+---
+
+## 1. Descripción de la fase
+
+Este canvas define el conjunto de **reglas técnicas obligatorias** que rigen el desarrollo del sistema SaaS clínico. Estas reglas garantizan:
+
+* Coherencia arquitectónica
+* Calidad del código
+* Seguridad del sistema
+* Escalabilidad y mantenibilidad
+
+Se aplican de forma transversal a todos los componentes del sistema:
+
+* Backend (NestJS microservicios)
+* Frontend (React + Angular)
+* IA (FastAPI)
+
+---
+
+## 2. Objetivo técnico
+
+Establecer un estándar de desarrollo uniforme que:
+
+* Evite código desorganizado
+* Garantice separación de responsabilidades
+* Permita evolución del sistema sin refactorizaciones críticas
+* Asegure cumplimiento de arquitectura definida
+
+---
+
+## 3. Carpetas involucradas (OBLIGATORIO)
+
+* /reglas
+* /apps/api-gateway
+* /apps/auth-service
+* /apps/core-service
+* /apps/clinical-service
+* /apps/inventory-service
+* /apps/scheduling-service
+* /apps/financial-service
+* /apps/hr-service
+* /frontend/react-app
+* /frontend/angular-app
+* /ai-service
+
+---
+
+## 4. Responsabilidades por carpeta
+
+### /reglas
+
+* Contiene estándares obligatorios
+* Referencia única para desarrollo
+* Base de validación técnica
+
+---
+
+### /apps/*
+
+* Aplicación estricta de arquitectura por capas
+* Implementación de lógica de negocio
+* Integración con base de datos
+
+---
+
+### /frontend/*
+
+* Implementación de UI desacoplada
+* Consumo de APIs
+* Gestión de estado
+
+---
+
+### /ai-service
+
+* Procesamiento de IA
+* Exposición de endpoints REST
+* Separación lógica de modelos
+
+---
+
+## 5. Flujo de datos paso a paso
+
+1. El desarrollador consulta /reglas antes de implementar
+2. Se identifica módulo correspondiente (/apps/*, frontend o IA)
+3. Se aplica estructura definida
+4. Se implementa lógica respetando capas
+5. Se validan reglas de seguridad
+6. Se implementan pruebas
+7. Se integra con otros servicios
+
+---
+
+## 6. Interacción entre microservicios
+
+* Comunicación vía API Gateway
+* Interacción mediante REST
+* Eventos desacoplados para procesos asincrónicos
+
+---
+
+## 7. Eventos (event-driven)
+
+Eventos aplicables:
+
+* entity_created
+* entity_updated
+* transaction_completed
+
+Uso:
+
+* auditoría
+* sincronización entre servicios
+* notificaciones
+
+---
+
+## 8. Estructura lógica interna
+
+### Backend (/apps/*)
+
+Cada microservicio debe seguir:
+
+* controller → entrada HTTP
+* service → lógica de negocio
+* repository → acceso a datos
+* domain → entidades y reglas
+
+---
+
+### Frontend (/frontend/*)
+
+* components → UI
+* services → consumo API
+* state → gestión de estado
+* routes → navegación
+
+---
+
+### IA (/ai-service)
+
+* routes → endpoints
+* services → lógica IA
+* models → modelos ML
+
+---
+
+## 9. Reglas de negocio
+
+* Ninguna lógica en controllers
+* Toda validación pasa por DTOs
+* Toda operación debe validar tenant
+* Separación estricta de dominios
+* No duplicación de lógica
+
+---
+
+## 10. Validaciones
+
+* DTOs obligatorios en backend
+* Validación de inputs en frontend
+* Validación de datos en IA
+* Validación de integridad en base de datos
+
+---
+
+## 11. Seguridad
+
+* JWT obligatorio en todos los endpoints
+* bcrypt para contraseñas
+* control por roles (RBAC)
+* sanitización de inputs
+* protección contra:
+
+  * SQL Injection
+  * XSS
+  * CSRF
+
+---
+
+## 12. Testing (TDD / BDD / DDD)
+
+### Backend (/apps/*)
+
+* TDD obligatorio
+* pruebas unitarias en servicios
+* pruebas de integración entre módulos
+
+---
+
+### Frontend (/frontend/*)
+
+* BDD para flujos de usuario
+* pruebas de interfaz
+
+---
+
+### Dominios complejos
+
+* DDD para:
+
+  * clínico
+  * inventario
+  * patrimonio
+
+---
+
+## 13. Dependencias técnicas
+
+* NestJS
+* React
+* Angular
+* FastAPI
+* PostgreSQL
+* Docker
+
+---
+
+## 14. Riesgos técnicos
+
+* acoplamiento indebido entre servicios
+* duplicación de lógica
+* falta de validaciones
+* inconsistencias entre frontend y backend
+* vulnerabilidades de seguridad
+
+---
+
+## 15. Resultado esperado
+
+* Código limpio y mantenible
+* Arquitectura consistente en todo el sistema
+* Reducción de errores en desarrollo
+* Base sólida para escalabilidad
+* Cumplimiento de estándares de software empresarial
+
+---

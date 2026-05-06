@@ -1,0 +1,34 @@
+{
+  "status": "ok",
+  "benchmarkReport": {
+    "modelType": "cnn",
+    "runs": 1,
+    "warmupRuns": 0,
+    "totalRequestsPerRun": 10,
+    "concurrency": 2,
+    "includeTraceHeader": true,
+    "aggregate": {
+      "avgP50LatencyMs": 3.22,
+      "avgP95LatencyMs": 10.06,
+      "avgP99LatencyMs": 10.06,
+      "avgThroughputRps": 428.89,
+      "maxP95LatencyMs": 10.06,
+      "minThroughputRps": 428.89,
+      "statusCounts": {
+        "200": 10
+      }
+    },
+    "measuredRuns": [
+      {
+        "totalRequests": 10.0,
+        "avgLatencyMs": 4.09,
+        "p50LatencyMs": 3.22,
+        "p95LatencyMs": 10.06,
+        "p99LatencyMs": 10.06,
+        "throughputRps": 428.89,
+        "elapsedSeconds": 0.02
+      }
+    ],
+    "warmupRunsSummary": []
+  }
+}

@@ -1,0 +1,70 @@
+services:
+  ai-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      PYTHONUNBUFFERED: 1
+      UVICORN_WORKERS: ${UVICORN_WORKERS:-2}
+      UVICORN_HOST: 0.0.0.0
+      UVICORN_PORT: 8000
+      AI_RATE_LIMIT_BACKEND: ${AI_RATE_LIMIT_BACKEND:-redis}
+      AI_REDIS_URL: ${AI_REDIS_URL:-redis://redis:6379/0}
+      AI_METRICS_INTERNAL_ONLY: ${AI_METRICS_INTERNAL_ONLY:-true}
+      AI_METRICS_ALLOWED_CIDRS: ${AI_METRICS_ALLOWED_CIDRS:-127.0.0.1/32,172.16.0.0/12,::1/128}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+      - ./models:/app/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    mem_limit: 128m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - ai-service
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

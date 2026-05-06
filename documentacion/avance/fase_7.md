@@ -1,0 +1,26 @@
+# Avance Fase 7 - RRHH
+
+- Fecha de implementacion: 2026-04-21
+- Servicio implementado: `hr-service`
+- Funcionalidades completadas:
+  - empleados
+  - asistencia
+  - evaluaciones
+  - planilla
+  - capacitaciones
+- Integracion con API Gateway validada: si (rutas `gateway/hr/*` implementadas)
+- Integracion con base de datos validada: si (repositorio SQL para `employees`, `attendance`, `employee_evaluations`, `payroll`, `trainings`)
+- Reglas aplicadas:
+  - todo empleado pertenece a un tenant
+  - no se registra asistencia/evaluacion/planilla/capacitacion sin empleado valido
+  - validacion de montos en planilla y consistencia de fechas en asistencia
+- Pruebas ejecutadas:
+  - compilacion de `hr-service`
+  - compilacion de `api-gateway`
+  - verificacion de endpoints y payloads documentados
+- Problemas encontrados:
+  - `hr-service` estaba en estado base de NestJS sin estructura de dominio
+  - no existian rutas de gateway para RRHH
+- Decisiones tecnicas:
+  - arquitectura alineada con servicios existentes (controller + service + repository + domain)
+  - validacion de acceso y tenant delegada al gateway usando modulo `hr`

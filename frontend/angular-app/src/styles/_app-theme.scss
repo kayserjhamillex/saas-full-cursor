@@ -1,0 +1,96 @@
+@use 'variables' as v;
+
+// Tema: variables CSS globales (colores, espaciado, tipografía) — una sola fuente para light/dark.
+// Preferir var(--ds-color-*) en código nuevo; --text, --bg, etc. son alias de compatibilidad.
+
+@mixin root-tokens {
+  // Colores semánticos (canónicos)
+  --ds-color-bg: #f2f8f7;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-soft: #f8fbff;
+  --ds-color-text: #102131;
+  --ds-color-muted: #537086;
+  --ds-color-border: #d7e6ef;
+  --ds-color-primary: #4f8fb1;
+  --ds-color-primary-strong: #2f6f91;
+  --ds-color-primary-soft: rgba(79, 143, 177, 0.16);
+  --ds-color-focus-ring: rgba(79, 143, 177, 0.3);
+  --ds-color-error: #b91c1c;
+  --ds-color-error-surface: rgba(254, 202, 202, 0.2);
+  --ds-color-success: #15803d;
+  // Alias legacy (compatibilidad con el resto de la app)
+  --bg: var(--ds-color-bg);
+  --surface: var(--ds-color-surface);
+  --surface-soft: var(--ds-color-surface-soft);
+  --text: var(--ds-color-text);
+  --muted: var(--ds-color-muted);
+  --border: var(--ds-color-border);
+  --primary: var(--ds-color-primary);
+  --primary-strong: var(--ds-color-primary-strong);
+  --primary-soft: var(--ds-color-primary-soft);
+  --ring: var(--ds-color-focus-ring);
+  // Espaciado
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  // Radios
+  --ds-radius-sm: #{v.ds-radius(sm)};
+  --ds-radius-md: #{v.ds-radius(md)};
+  --ds-radius-lg: #{v.ds-radius(lg)};
+  // Tipografía
+  --ds-font-sans: #{v.$ds-font-sans};
+  --ds-font-mono: #{v.$ds-font-mono};
+  --ds-font-label: 500 #{v.ds-fs(sm)}/#{v.ds-lh(snug)} var(--ds-font-sans);
+  --ds-font-body: #{v.ds-fs(base)}/#{v.ds-lh(normal)} var(--ds-font-sans);
+  --ds-font-h1: #{v.ds-fw(semibold)} #{v.ds-fs(2xl)}/#{v.ds-lh(tight)} var(--ds-font-sans);
+  // Sombras
+  --ds-shadow-sm: #{v.ds-elevation(sm)};
+  --ds-shadow-md: #{v.ds-elevation(md)};
+  --shadow: 0 18px 44px rgba(16, 33, 49, 0.09);
+}
+
+@mixin dark-tokens {
+  --ds-color-bg: #08131d;
+  --ds-color-surface: #0f1f2c;
+  --ds-color-surface-soft: #13283a;
+  --ds-color-text: #e6f2fa;
+  --ds-color-muted: #9cb6c8;
+  --ds-color-border: #244152;
+  --ds-color-primary: #86b7d1;
+  --ds-color-primary-strong: #a4cee3;
+  --ds-color-primary-soft: rgba(134, 183, 209, 0.2);
+  --ds-color-focus-ring: rgba(134, 183, 209, 0.4);
+  --ds-color-error: #f87171;
+  --ds-color-error-surface: rgba(127, 29, 29, 0.35);
+  --ds-color-success: #4ade80;
+  // Legacy alias
+  --bg: var(--ds-color-bg);
+  --surface: var(--ds-color-surface);
+  --surface-soft: var(--ds-color-surface-soft);
+  --text: var(--ds-color-text);
+  --muted: var(--ds-color-muted);
+  --border: var(--ds-color-border);
+  --primary: var(--ds-color-primary);
+  --primary-strong: var(--ds-color-primary-strong);
+  --primary-soft: var(--ds-color-primary-soft);
+  --ring: var(--ds-color-focus-ring);
+  --ds-shadow-sm: 0 1px 0 rgba(0, 0, 0, 0.2);
+  --ds-shadow-md: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.34);
+}
+
+// Error/success usan nombres ds-error en _ds-tokens — alinear
+:root {
+  @include root-tokens;
+  // Compat: tokens con nombre anterior
+  --ds-error: var(--ds-color-error);
+  --ds-error-bg: var(--ds-color-error-surface);
+  --ds-success: var(--ds-color-success);
+}
+
+[data-theme='dark'] {
+  @include dark-tokens;
+}

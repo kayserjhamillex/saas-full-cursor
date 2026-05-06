@@ -1,0 +1,221 @@
+@use 'styles/app-theme';
+@use 'styles/variables' as *;
+
+/* ─── Reset baseline ─────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: var(--ds-font-sans, 'Inter', 'Segoe UI', system-ui, sans-serif);
+  font-size: ds-fs(base);
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% -8%, rgba(132, 198, 193, 0.24), transparent 42%),
+    radial-gradient(circle at 100% 0%, rgba(79, 143, 177, 0.18), transparent 40%), var(--bg);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+button,
+input,
+textarea,
+a {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* ─── Utility: Card ──────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: #{ds-radius(lg)};
+  overflow: hidden;
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.card--elevated {
+  box-shadow: var(--ds-shadow-md);
+}
+
+.card--hover {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary);
+    box-shadow: var(--ds-shadow-md);
+    transform: translateY(-1px);
+  }
+}
+
+/* ─── Utility: Container ─────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 2rem);
+}
+
+.container--sm {
+  max-width: 640px;
+}
+
+.container--md {
+  max-width: 900px;
+}
+
+/* ─── Utility: Typography ────────────────────────────────────── */
+.title {
+  font-size: #{ds-fs(2xl)};
+  font-weight: #{ds-fw(bold)};
+  line-height: #{ds-lh(tight)};
+  color: var(--text);
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.title--sm {
+  font-size: #{ds-fs(lg)};
+  font-weight: #{ds-fw(semibold)};
+}
+
+.title--lg {
+  font-size: clamp(#{ds-fs(2xl)}, 3vw, #{ds-fs(3xl)});
+}
+
+.eyebrow {
+  font-size: #{ds-fs(xs)};
+  font-weight: #{ds-fw(semibold)};
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--primary-strong);
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.lead {
+  font-size: #{ds-fs(base)};
+  line-height: #{ds-lh(relaxed)};
+  color: var(--muted);
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--ds-font-mono);
+}
+
+/* ─── Utility: Badge / Chip ──────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: #{ds-fs(xs)};
+  font-weight: #{ds-fw(semibold)};
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.badge--primary {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.badge--success {
+  background: rgba(21, 128, 61, 0.1);
+  border-color: rgba(21, 128, 61, 0.25);
+  color: var(--ds-color-success, #15803d);
+}
+
+.badge--error {
+  background: var(--ds-color-error-surface);
+  border-color: rgba(185, 28, 28, 0.25);
+  color: var(--ds-color-error, #b91c1c);
+}
+
+/* ─── Utility: Divider ───────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ─── Utility: Stack / Row ───────────────────────────────────── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stack--sm {
+  gap: 0.5rem;
+}
+
+.stack--lg {
+  gap: 1.5rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.row--between {
+  justify-content: space-between;
+}
+
+/* ─── Utility: Surface section ───────────────────────────────── */
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+/* ─── Utility: Scrollable ────────────────────────────────────── */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Utility: Truncate ──────────────────────────────────────── */
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ─── Utility: Visually hidden (a11y) ───────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
